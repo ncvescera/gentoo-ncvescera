@@ -24,7 +24,8 @@ src_unpack() {
 }
 
 src_compile() {
-	ego build -mod=vendor -v -o bin/step ./cmd/step
+	current_date=$(date "+%Y-%m-%d")
+	ego build -mod=vendor -v -ldflags="-X \"main.Version=${PV}\" -X \"main.BuildTime=${current_date}\"" -o bin/step ./cmd/step
 }
 
 src_install() {
