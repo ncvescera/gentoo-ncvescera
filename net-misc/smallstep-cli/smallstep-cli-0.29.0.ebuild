@@ -1,3 +1,5 @@
+# in order to update vendor/ folder see https://wiki.gentoo.org/wiki/Writing_go_Ebuilds
+
 EAPI=8
 inherit go-module
 
