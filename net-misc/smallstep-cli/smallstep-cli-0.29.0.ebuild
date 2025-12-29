@@ -1,13 +1,13 @@
 # in order to update vendor/ folder see https://wiki.gentoo.org/wiki/Writing_go_Ebuilds
 
 EAPI=8
-inherit go-module
+inherit git-r3 go-module
 
 DESCRIPTION="A zero trust swiss army knife for working with X509, OAuth, JWT, OATH OTP, etc. "
 HOMEPAGE="https://github.com/smallstep/cli/tree/master"
-SRC_URI="https://github.com/smallstep/cli/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz
-		https://github.com/ncvescera/gentoo-ncvescera/raw/refs/heads/main/net-misc/smallstep-cli/${P}-deps.tar.xz"
-S="${WORKDIR}/cli-${PV}"
+SRC_URI="https://github.com/smallstep/cli.git"
+EGIT_REPO_URI="https://github.com/smallstep/cli.git"
+EGIT_COMMIT="v${PV}"  # Tag name
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="amd64"
@@ -17,17 +17,13 @@ DEPEND="${RDEPEND}
 	>=dev-lang/go-1.24.11
 	>=dev-build/cmake-4.1.2-r1"
 
-src_prepare() {
-	default
-}
-
 src_unpack() {
-	default
+	git-r3_src_unpack
+    go-module_live_vendor # This is needed most of the time except when the source includes the vendor files too, like the lazygit project
 }
 
 src_compile() {
-	current_date=$(date "+%Y-%m-%d")
-	ego build -mod=vendor -v -ldflags="-X \"main.Version=${PV}\" -X \"main.BuildTime=${current_date}\"" -o bin/step ./cmd/step
+	emake build
 }
 
 src_install() {
